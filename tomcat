@@ -1,0 +1,21 @@
+#!/bin/bash
+#put this file /usr/local/bin, and move tomcat to /usr/local/tomcat/
+
+
+case $1 in
+start)
+sh /usr/local/tomcat/bin/startup.sh
+;;
+stop)
+sh /usr/local/tomcat//bin/shutdown.sh
+;;
+restart)
+sh /usr/local/tomcat/bin/shutdown.sh
+sh /usr/local/tomcat/bin/startup.sh
+;;
+*)
+echo “Usage: start|stop|restart”
+;;
+esac
+
+exit 0
