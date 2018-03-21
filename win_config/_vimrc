@@ -1,0 +1,99 @@
+source $VIMRUNTIME/vimrc_example.vim
+source $VIMRUNTIME/mswin.vim
+behave mswin
+
+set diffexpr=MyDiff()
+function MyDiff()
+  let opt = '-a --binary '
+  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+  let arg1 = v:fname_in
+  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+  let arg2 = v:fname_new
+  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+  let arg3 = v:fname_out
+  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+  if $VIMRUNTIME =~ ' '
+    if &sh =~ '\<cmd'
+      if empty(&shellxquote)
+        let l:shxq_sav = ''
+        set shellxquote&
+      endif
+      let cmd = '"' . $VIMRUNTIME . '\diff"'
+    else
+      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+    endif
+  else
+    let cmd = $VIMRUNTIME . '\diff'
+  endif
+  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
+  if exists('l:shxq_sav')
+    let &shellxquote=l:shxq_sav
+  endif
+endfunction
+
+"-----------------------------------eric added 2017.07.22----------------
+"文件放在 C:\Program Files (x86)\Vim\
+"for multiple language support
+"  Gvim中文菜单乱码解决方案
+
+" 设置文件编码格式 似乎只对gvim有效
+set encoding=utf-8
+set fileencodings=utf-8,chinese,latin-1,gbk,gb18030,gk2312
+if has("win32")
+ set fileencoding=chinese
+else
+ set fileencoding=utf-8
+endif
+
+"解决菜单乱码
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+
+"解决consle提示信息输出乱码 注释 因为命令行的vim乱码, 干脆不用
+"language messages zh_CN.utf-8
+
+"set syntax support
+set nu!
+colorscheme desert
+syntax enable
+syntax on
+
+"for a.vim
+nnoremap <silent> <F12> :A<CR> 
+
+"for TagList
+let Tlist_Show_One_File=1 
+let Tlist_Exit_OnlyWindow=1
+
+"for WinManager
+" 设置界面分割
+let g:winManagerWindowLayout = "FileExplorer|TagList"
+"设置winmanager的宽度，默认为25
+let g:winManagerWidth = 30
+"定义打开关闭winmanager快捷键为F8
+nmap <silent> <F8> :WMToggle<cr>
+"在进入vim时自动打开winmanager
+let g:AutoOpenWinManager = 1
+
+"for ctags
+set tags=b1_tags; 
+"set autochdir
+
+"for grep
+:let Grep_Path = 'D:\Eric\Software\DevelopTool\grep\bin\grep.exe'
+:let Fgrep_Path = 'D:\Eric\Software\DevelopTool\grep\bin\fgrep.exe'
+:let Egrep_Path = 'D:\Eric\Software\DevelopTool\grep\bin\egrep.exe' 
+:let Grep_Skip_Files = 'b1_tags' 
+nnoremap <silent> <F3> :Grep<CR>
+
+"for minibufexpl
+let g:miniBufExplMapWindowNavVim = 1 
+let g:miniBufExplMapWindowNavArrows = 1 
+let g:miniBufExplMapCTabSwitchBufs = 1 
+let g:miniBufExplModSelTarget = 1
+
+"support Ctrl+C Ctrl+V Ctrl+X
+nmap <C-V> "+gP
+imap <C-V> <ESC><C-V>i
+vmap <C-C> "+y
